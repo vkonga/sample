@@ -17,18 +17,26 @@ type RequestAccessInput = z.infer<typeof requestAccessSchema>;
 export async function requestEarlyAccess(
   input: RequestAccessInput
 ): Promise<{ success: boolean; blurb?: string; error?: string }> {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-
   const parsedInput = requestAccessSchema.safeParse(input);
 
   if (!parsedInput.success) {
     return { success: false, error: "Invalid input." };
   }
   
+  // Explicitly check for environment variables
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    const errorMessage = "Supabase environment variables are missing. Please check your .env.local file.";
+    console.error(errorMessage);
+    return { success: false, error: errorMessage };
+  }
+
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   if (!supabase) {
-    console.error("Database connection failed: Supabase client is null. Check your .env credentials.");
-    return { success: false, error: "Could not connect to the database. Please check your Supabase credentials in the .env file." };
+    const errorMessage = "Failed to create Supabase client. This is an unexpected error.";
+    console.error(errorMessage);
+    return { success: false, error: errorMessage };
   }
 
   try {
@@ -40,10 +48,13 @@ export async function requestEarlyAccess(
 
     if (error) {
       console.error("Supabase insert error:", error);
+      let friendlyError = "Could not save your request. Please try again.";
       if (error.code === '42501') { 
-        return { success: false, error: "Database security policy error. Please ensure your Supabase table allows public inserts." };
+        friendlyError = "Database security policy error. Please ensure your Supabase table allows public inserts.";
+      } else {
+        friendlyError = `Database error: ${error.message}`;
       }
-      return { success: false, error: "Could not save your request. Please try again." };
+      return { success: false, error: friendlyError };
     }
 
     const result = await generatePersonalizedBlurb({
@@ -58,8 +69,9 @@ export async function requestEarlyAccess(
     }
     
   } catch (error) {
-    console.error("Error requesting early access:", error);
-    return { success: false, error: "Something went wrong on our end. Please try again later." };
+    console.error("Error in requestEarlyAccess function:", error);
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    return { success: false, error: `An unexpected error occurred: ${errorMessage}` };
   }
 }
 
