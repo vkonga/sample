@@ -2,16 +2,10 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export function createClient(cookieStore: ReturnType<typeof cookies>) {
-  // Use hardcoded placeholders to prevent app from crashing
-  // USER: Replace with your actual Supabase credentials or use environment variables
-  const supabaseUrl = "https://your-project-url.supabase.co";
-  const supabaseAnonKey = "your-anon-key-goes-here";
-  
-  if (
-    !supabaseUrl ||
-    !supabaseAnonKey ||
-    supabaseUrl === "https://your-project-url.supabase.co"
-  ) {
+  const supabaseUrl = "https://example.supabase.co";
+  const supabaseAnonKey = "example-anon-key";
+
+  if (supabaseUrl === "https://example.supabase.co") {
     return null;
   }
 
