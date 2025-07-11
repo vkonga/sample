@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { generatePersonalizedBlurb } from "@/ai/flows/generate-personalized-blurb";
+import { generateStory } from "@/ai/flows/generate-story";
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 
@@ -38,7 +39,7 @@ export async function requestEarlyAccess(
 
     if (error) {
       console.error("Supabase insert error:", error);
-      if (error.code === '42501') { // permission denied
+      if (error.code === '42501') { 
         return { success: false, error: "Database security policy error. Please ensure your Supabase table allows public inserts." };
       }
       return { success: false, error: "Could not save your request. Please try again." };
@@ -58,5 +59,36 @@ export async function requestEarlyAccess(
   } catch (error) {
     console.error("Error requesting early access:", error);
     return { success: false, error: "Something went wrong on our end. Please try again later." };
+  }
+}
+
+
+const generateStorySchema = z.object({
+  prompt: z.string().min(10, 'Prompt must be at least 10 characters.'),
+});
+
+type GenerateStoryInput = z.infer<typeof generateStorySchema>;
+
+export async function generateStoryAction(
+  input: GenerateStoryInput
+): Promise<{ success: boolean; story?: string; error?: string }> {
+  const parsedInput = generateStorySchema.safeParse(input);
+  if (!parsedInput.success) {
+    return { success: false, error: 'Invalid input.' };
+  }
+
+  try {
+    const result = await generateStory({
+      prompt: parsedInput.data.prompt,
+    });
+
+    if (result.story) {
+      return { success: true, story: result.story };
+    } else {
+      return { success: false, error: 'Could not generate a story from your prompt. Please try again.' };
+    }
+  } catch (error) {
+    console.error('Error generating story:', error);
+    return { success: false, error: 'An unexpected error occurred. Please try again later.' };
   }
 }

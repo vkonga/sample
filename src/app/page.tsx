@@ -5,6 +5,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import EarlyAccessForm from "@/components/early-access-form";
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default async function Home() {
   const cookieStore = cookies();
@@ -12,7 +14,7 @@ export default async function Home() {
 
   let earlyAccessCount = 0;
   if (supabase) {
-    const { count, error } = await supabase
+    const { count } = await supabase
       .from('early_access_requests')
       .select('*', { count: 'exact', head: true });
     
@@ -44,6 +46,11 @@ export default async function Home() {
               <p className="text-lg md:text-xl text-muted-foreground">
                 Unleash your creativity with our AI-powered storybook generator. Create unique, engaging tales for children, and be the first to experience the magic.
               </p>
+              <div className="flex gap-4">
+                <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold">
+                  <Link href="/create">Start Creating Now</Link>
+                </Button>
+              </div>
             </div>
             <div>
               <Card className="shadow-2xl">
