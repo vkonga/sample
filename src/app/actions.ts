@@ -14,25 +14,16 @@ const requestAccessSchema = z.object({
 
 type RequestAccessInput = z.infer<typeof requestAccessSchema>;
 
-export async function requestEarlyAccess(
-  input: RequestAccessInput
-): Promise<{ success: boolean; blurb?: string; error?: string }> {
-  const parsedInput = requestAccessSchema.safeParse(input);
-
-  if (!parsedInput.success) {
-    return { success: false, error: "Invalid input." };
-  }
-  
+function getSupabaseClient() {
   const cookieStore = cookies();
-  
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    return { success: false, error: "Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file." };
+    throw new Error("Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file.");
   }
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+  return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       get(name: string) {
         return cookieStore.get(name)?.value;
@@ -53,9 +44,21 @@ export async function requestEarlyAccess(
       },
     },
   });
+}
 
 
+export async function requestEarlyAccess(
+  input: RequestAccessInput
+): Promise<{ success: boolean; blurb?: string; error?: string }> {
+  const parsedInput = requestAccessSchema.safeParse(input);
+
+  if (!parsedInput.success) {
+    return { success: false, error: "Invalid input." };
+  }
+  
   try {
+    const supabase = getSupabaseClient();
+
     const dataToInsert = { 
       name: parsedInput.data.userName,
       email: parsedInput.data.email,
@@ -125,32 +128,21 @@ export async function generateStoryAction(
 }
 
 export async function getEarlyAccessCount(): Promise<number> {
-  const cookieStore = cookies();
-  
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  try {
+    const supabase = getSupabaseClient();
+    const { count, error } = await supabase
+      .from('early_access_requests')
+      .select('*', { count: 'exact', head: true });
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("Database credentials not configured for counting.");
+    if (error) {
+      // This will catch connection errors (like fetch failed) and DB errors.
+      throw error;
+    }
+    
+    return count ?? 0;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+    console.error("Error fetching count:", errorMessage);
     return 0;
   }
-
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
-      },
-    },
-  });
-
-  const { count, error } = await supabase
-    .from('early_access_requests')
-    .select('*', { count: 'exact', head: true });
-
-  if (error) {
-    console.error("Error fetching count:", error.message);
-    return 0;
-  }
-  
-  return count ?? 0;
 }
