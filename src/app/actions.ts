@@ -20,8 +20,8 @@ function getSupabaseClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    // This is a server-side check, so we can throw an error.
-    // The calling function will catch it.
+    // This is a server-side check, so we can throw a specific error.
+    // The calling function will catch it and display a helpful message.
     throw new Error("Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file.");
   }
 
