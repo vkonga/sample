@@ -151,7 +151,7 @@ export default function EarlyAccessForm() {
             </div>
           )}
           
-          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold" size="lg" disabled={formState.isSubmitting}>
+          <Button type="submit" className="w-full font-bold" size="lg" disabled={formState.isSubmitting}>
             {formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

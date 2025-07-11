@@ -14,10 +14,10 @@ export default function CreatePage() {
           </Link>
         </div>
       </header>
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-extrabold font-headline tracking-tight text-foreground">Let's Create a Story</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold font-headline tracking-tight text-foreground">Let's Create a Story</h2>
             <p className="mt-4 text-lg text-muted-foreground">
               This feature is coming soon!
             </p>
