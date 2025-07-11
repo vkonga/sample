@@ -26,7 +26,7 @@ export async function requestEarlyAccess(
   }
   
   if (!supabase) {
-    return { success: false, error: "Could not connect to the database. Please check your Supabase credentials." };
+    return { success: false, error: "Could not connect to the database. Please check your Supabase credentials in the .env file." };
   }
 
   try {
@@ -39,7 +39,7 @@ export async function requestEarlyAccess(
     if (error) {
       console.error("Supabase insert error:", error);
       if (error.code === '42501') { // permission denied
-        return { success: false, error: "Database security policy error. Please ensure 'early_access_requests' table allows public inserts in Supabase RLS settings." };
+        return { success: false, error: "Database security policy error. Please ensure your Supabase table allows public inserts." };
       }
       return { success: false, error: "Could not save your request. Please try again." };
     }
