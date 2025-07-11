@@ -40,7 +40,7 @@ export async function requestEarlyAccess(
   try {
     const supabase = getSupabaseClient();
     if (!supabase) {
-      throw new Error("Database client could not be initialized.");
+      throw new Error("Database client could not be initialized. Please check server credentials.");
     }
 
     const { error: dbError } = await supabase
@@ -57,8 +57,8 @@ export async function requestEarlyAccess(
   } catch (error) {
     console.error("Error in requestEarlyAccess:", error);
     const errorMessage =
-      error instanceof Error ? error.message : "An unknown server error.";
-    return { success: false, message: `An error occurred: ${errorMessage}` };
+      error instanceof Error ? error.message : "An unknown server error occurred.";
+    return { success: false, message: "Failed to submit request.", error: errorMessage };
   }
 }
 
