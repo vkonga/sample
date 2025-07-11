@@ -23,18 +23,11 @@ export async function requestEarlyAccess(
     return { success: false, error: "Invalid input." };
   }
   
-  // Explicitly check for environment variables
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    const errorMessage = "Supabase environment variables are missing. Please check your .env.local file.";
-    console.error(errorMessage);
-    return { success: false, error: errorMessage };
-  }
-
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
   if (!supabase) {
-    const errorMessage = "Failed to create Supabase client. This is an unexpected error.";
+    const errorMessage = "Supabase client could not be created. Please check your credentials in the Supabase helper files.";
     console.error(errorMessage);
     return { success: false, error: errorMessage };
   }
