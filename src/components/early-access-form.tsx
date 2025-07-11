@@ -25,7 +25,7 @@ const formSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
   preferences: z
     .string()
-    .min(10, "Tell us a bit more about your preferences (min 10 characters).")
+    .min(10, "Tell us a bit more about what you'd like to create (min 10 characters).")
     .max(500, "Preferences can be up to 500 characters."),
 });
 
@@ -53,6 +53,7 @@ export default function EarlyAccessForm() {
     try {
       const result = await requestEarlyAccess({
         userName: values.name,
+        email: values.email,
         storyPreferences: values.preferences,
       });
 
@@ -91,14 +92,14 @@ export default function EarlyAccessForm() {
               <CardTitle className="text-2xl font-headline mt-4">You're on the list!</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">Thank you for signing up for early access.</p>
+              <p className="text-muted-foreground">Thank you for signing up! We'll be in touch soon.</p>
               <div className="text-left bg-background/50 p-4 rounded-lg border border-border">
-                <p className="font-semibold text-foreground">As a token of our appreciation, here's a little preview of the magic:</p>
+                <p className="font-semibold text-foreground">As a token of our appreciation, here's a magical preview:</p>
                 <blockquote className="mt-2 italic text-muted-foreground border-l-2 border-accent pl-4">
                   {formState.personalizedBlurb}
                 </blockquote>
               </div>
-              <p className="text-sm text-muted-foreground pt-4">We'll be in touch soon!</p>
+              <p className="text-sm text-muted-foreground pt-4">You can now close this page.</p>
             </CardContent>
           </Card>
         </div>

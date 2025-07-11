@@ -1,8 +1,21 @@
-import { BookOpen, KeyRound, Palette, Quote, Rocket, Sparkles } from "lucide-react";
+import { BookOpen, KeyRound, Palette, Quote, Rocket, Sparkles, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import EarlyAccessForm from "@/components/early-access-form";
+import { getEarlyAccessCount } from "./actions";
+import { Suspense } from "react";
+
+async function EarlyAccessCounter() {
+  const count = await getEarlyAccessCount();
+  return (
+    <div className="flex items-center gap-2 text-muted-foreground">
+      <Users className="h-5 w-5" />
+      <span className="font-semibold">{count}</span>
+      <span>people have joined the waitlist!</span>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
@@ -106,9 +119,9 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 mb-12">
               <h3 className="text-3xl md:text-4xl font-bold font-headline">Loved by Early Testers</h3>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Don't just take our word for it. Here's what our first users are saying.
-              </p>
+               <Suspense fallback={<div className="h-6 w-64 bg-muted rounded-md mx-auto animate-pulse" />}>
+                <EarlyAccessCounter />
+              </Suspense>
             </div>
             <Carousel
               opts={{
