@@ -3,49 +3,13 @@
 import { z } from "zod";
 import { generatePersonalizedBlurb } from "@/ai/flows/generate-personalized-blurb";
 import { generateStory } from "@/ai/flows/generate-story";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers";
 
 const requestAccessSchema = z.object({
   userName: z.string(),
-  email: z.string().email(),
   storyPreferences: z.string(),
 });
 
 type RequestAccessInput = z.infer<typeof requestAccessSchema>;
-
-function getSupabaseClient() {
-  const cookieStore = cookies();
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("Supabase credentials missing in .env file.");
-    return null;
-  }
-
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
-      },
-      set(name: string, value: string, options: CookieOptions) {
-        try {
-          cookieStore.set({ name, value, ...options });
-        } catch (_) {
-          // Server Component: Ignore set
-        }
-      },
-      remove(name: string, options: CookieOptions) {
-        try {
-          cookieStore.set({ name, value: "", ...options });
-        } catch (_) {
-          // Server Component: Ignore remove
-        }
-      },
-    },
-  });
-}
 
 export async function requestEarlyAccess(
   input: RequestAccessInput
@@ -57,37 +21,6 @@ export async function requestEarlyAccess(
   }
 
   try {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      return { success: false, error: "Database client could not be initialized. Check server logs." };
-    }
-
-    const dataToInsert = {
-      name: parsedInput.data.userName,
-      email: parsedInput.data.email,
-      preferences: parsedInput.data.storyPreferences,
-    };
-
-    const { error } = await supabase
-      .from("early_access_requests")
-      .insert(dataToInsert);
-
-    if (error) {
-      console.error("Supabase insert error:", error);
-      let friendlyError = "Could not save your request. Please try again.";
-
-      if (error.code === "42501") {
-        friendlyError =
-          "Database security policy error. Please check Supabase RLS policies.";
-      } else if (error.code === "23505") {
-        friendlyError = "This email has already requested access.";
-      } else {
-        friendlyError = `Database error: ${error.message}`;
-      }
-
-      return { success: false, error: friendlyError };
-    }
-
     const result = await generatePersonalizedBlurb({
       userName: parsedInput.data.userName,
       storyPreferences: parsedInput.data.storyPreferences,
@@ -142,25 +75,5 @@ export async function generateStoryAction(
       success: false,
       error: "Unexpected error. Please try again later.",
     };
-  }
-}
-
-export async function getEarlyAccessCount(): Promise<number> {
-  try {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      console.error("Error fetching count: Supabase client is null.");
-      return 0;
-    }
-    const { count, error } = await supabase
-      .from("early_access_requests")
-      .select("", { count: "exact", head: true });
-
-    if (error) throw error;
-
-    return count ?? 0;
-  } catch (error) {
-    console.error("Error fetching count:", error);
-    return 0;
   }
 }

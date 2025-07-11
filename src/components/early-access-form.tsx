@@ -22,7 +22,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
-  email: z.string().email("Please enter a valid email address."),
   preferences: z
     .string()
     .min(10, "Tell us a bit more about your preferences (min 10 characters).")
@@ -43,7 +42,6 @@ export default function EarlyAccessForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      email: "",
       preferences: "",
     },
   });
@@ -53,7 +51,6 @@ export default function EarlyAccessForm() {
     try {
       const result = await requestEarlyAccess({
         userName: values.name,
-        email: values.email,
         storyPreferences: values.preferences,
       });
 
@@ -89,17 +86,17 @@ export default function EarlyAccessForm() {
               <div className="mx-auto">
                 <PartyPopper className="h-12 w-12 text-accent-foreground" />
               </div>
-              <CardTitle className="text-2xl font-headline mt-4">You're on the list!</CardTitle>
+              <CardTitle className="text-2xl font-headline mt-4">Enjoy your sneak peek!</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">Thank you for your interest! We've received your request.</p>
+              <p className="text-muted-foreground">Thank you for trying out our AI!</p>
               <div className="text-left bg-background/50 p-4 rounded-lg border border-border">
                 <p className="font-semibold text-foreground">Here's a little something just for you:</p>
                 <blockquote className="mt-2 italic text-muted-foreground border-l-2 border-accent pl-4">
                   {formState.personalizedBlurb}
                 </blockquote>
               </div>
-              <p className="text-sm text-muted-foreground pt-4">We'll send you an email with your access key as soon as a spot opens up. Keep an eye on your inbox!</p>
+              <p className="text-sm text-muted-foreground pt-4">We're excited to show you what's next!</p>
             </CardContent>
           </Card>
         </div>
@@ -118,19 +115,6 @@ export default function EarlyAccessForm() {
                 <FormLabel>Your Name</FormLabel>
                 <FormControl>
                   <Input placeholder="e.g., Jane Doe" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="you@example.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -165,12 +149,12 @@ export default function EarlyAccessForm() {
             {formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Requesting...
+                Generating...
               </>
-            ) : "Get My Early Access"}
+            ) : "Generate My Blurb"}
           </Button>
           <p className="text-xs text-center text-muted-foreground">
-              We respect your privacy. No spam, we promise.
+              Get a taste of our AI's creativity.
           </p>
         </form>
       </Form>

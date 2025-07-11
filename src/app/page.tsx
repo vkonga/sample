@@ -1,31 +1,8 @@
-import { BookOpen, KeyRound, Palette, Quote, Rocket, Sparkles, Users } from "lucide-react";
+import { BookOpen, KeyRound, Palette, Quote, Rocket, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import EarlyAccessForm from "@/components/early-access-form";
-import { getEarlyAccessCount } from "@/app/actions";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Suspense } from "react";
-
-async function EarlyAccessCounter() {
-  const earlyAccessCount = await getEarlyAccessCount();
-  return (
-    <div className="flex justify-center items-center gap-2 mb-4 text-sm font-medium text-muted-foreground">
-      <Users className="h-4 w-4" />
-      <p>Join <span className="font-bold text-foreground">{earlyAccessCount}</span> others on the waitlist!</p>
-    </div>
-  );
-}
-
-function CounterFallback() {
-  return (
-    <div className="flex justify-center items-center gap-2 mb-4 text-sm font-medium text-muted-foreground">
-      <Users className="h-4 w-4" />
-      <p>Loading waitlist count...</p>
-    </div>
-  );
-}
 
 export default function Home() {
   return (
@@ -66,9 +43,6 @@ export default function Home() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Suspense fallback={<CounterFallback />}>
-                    <EarlyAccessCounter />
-                  </Suspense>
                   <EarlyAccessForm />
                 </CardContent>
               </Card>
