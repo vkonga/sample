@@ -21,29 +21,29 @@ type StorybookViewerProps = {
 const PageComponent = React.forwardRef<HTMLDivElement, { page: Page, pageNumber: number }>(({ page, pageNumber }, ref) => {
   return (
     <div ref={ref} className="bg-background border border-border/50 flex flex-col items-center justify-center p-4">
-      <div className="flex flex-col md:flex-row items-center justify-center w-full h-full">
-        {page.image && (
-          <div className="relative w-full md:w-1/2 h-64 md:h-full min-h-[500px]">
+      {page.image ? (
+         <div className="relative w-full h-full">
             <Image
               src={page.image}
-              alt={page.alt || ''}
+              alt={page.alt || 'Storybook image'}
               fill
               className="object-cover"
               priority={pageNumber <= 2}
             />
-          </div>
-        )}
-        <div className={`p-8 md:p-12 space-y-4 text-center flex flex-col justify-center items-center ${page.image ? 'md:w-1/2' : 'w-full'}`}>
-          {page.type === "cover" ? (
-            <h3 className="text-4xl font-bold font-headline">{page.text}</h3>
-          ) : (
-            <p className="font-headline leading-relaxed" style={{ fontSize: '25px' }}>{page.text}</p>
-          )}
+             {page.type === 'cover' && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                    <h3 className="text-4xl font-bold font-headline text-white drop-shadow-lg p-4 text-center">{page.text}</h3>
+                </div>
+            )}
+         </div>
+      ) : (
+        <div className="p-8 md:p-12 space-y-4 text-center flex flex-col justify-center items-center w-full h-full">
+           <p className="font-headline leading-relaxed" style={{ fontSize: '25px' }}>{page.text}</p>
           {page.type === "end" && (
             <p className="text-3xl font-bold font-headline mt-6">{page.endText}</p>
           )}
         </div>
-      </div>
+      )}
       <div className="absolute bottom-4 text-muted-foreground text-sm">{pageNumber}</div>
     </div>
   );
