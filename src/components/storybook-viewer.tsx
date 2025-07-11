@@ -19,23 +19,25 @@ type StorybookViewerProps = {
 };
 
 const PageComponent = React.forwardRef<HTMLDivElement, { page: Page, pageNumber: number }>(({ page, pageNumber }, ref) => {
+  const hasImage = !!page.image;
+  
   return (
     <div ref={ref} className="bg-background border border-border/50 flex flex-col items-center justify-center p-4">
-      {page.image ? (
-         <div className="relative w-full h-full">
-            <Image
-              src={page.image}
-              alt={page.alt || 'Storybook image'}
-              fill
-              className="object-cover"
-              priority={pageNumber <= 2}
-            />
-             {page.type === 'cover' && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 p-4">
-                    <h3 className="text-3xl md:text-4xl font-bold font-headline text-white drop-shadow-lg text-center">{page.text}</h3>
-                </div>
-            )}
-         </div>
+      {hasImage ? (
+        <div className="relative w-full h-full">
+          <Image
+            src={page.image!}
+            alt={page.alt || 'Storybook image'}
+            fill
+            className="object-cover"
+            priority={pageNumber <= 2}
+          />
+          {page.type === 'cover' && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 p-4">
+              <h3 className="text-3xl md:text-4xl font-bold font-headline text-white drop-shadow-lg text-center">{page.text}</h3>
+            </div>
+          )}
+        </div>
       ) : (
         <div className="p-6 md:p-12 space-y-4 text-center flex flex-col justify-center items-center w-full h-full">
            <p className="font-headline leading-relaxed text-lg sm:text-xl md:text-2xl">{page.text}</p>
@@ -81,7 +83,7 @@ export default function StorybookViewer({ pages }: StorybookViewerProps) {
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4">
-      <div className="w-full max-w-4xl mx-auto aspect-[16/9] md:aspect-[4/3] relative">
+      <div className="w-full max-w-4xl mx-auto aspect-video md:aspect-[4/3] relative">
          <HTMLFlipBook
           width={500}
           height={650}
@@ -103,17 +105,9 @@ export default function StorybookViewer({ pages }: StorybookViewerProps) {
         </HTMLFlipBook>
       </div>
       <div className="flex items-center justify-center space-x-2 md:space-x-4">
-        <Button onClick={handlePrev} disabled={currentPage === 0} variant="outline" size="sm">
-          <ChevronLeft />
-          Previous
-        </Button>
         <div className="text-muted-foreground text-sm">
           Page {currentPage + 1} of {totalPages}
         </div>
-        <Button onClick={handleNext} disabled={currentPage >= totalPages - 1} variant="outline" size="sm">
-          Next
-          <ChevronRight />
-        </Button>
       </div>
       <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
         <CornerDownLeft className="w-4 h-4" />
