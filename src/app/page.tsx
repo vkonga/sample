@@ -41,11 +41,9 @@ export default function Home() {
               <p className="text-lg md:text-xl text-muted-foreground">
                 Unleash your creativity with our AI-powered storybook generator. Create unique, engaging tales for children, and be the first to experience the magic.
               </p>
-              <div className="flex gap-4">
-                {/* <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold">
-                  <Link href="/create">Start Creating Now</Link>
-                </Button> */}
-              </div>
+               <Suspense fallback={<div className="h-6 w-64 bg-muted rounded-md animate-pulse" />}>
+                <EarlyAccessCounter />
+              </Suspense>
             </div>
             <div>
               <Card className="shadow-2xl">
@@ -119,9 +117,6 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 mb-12">
               <h3 className="text-3xl md:text-4xl font-bold font-headline">Loved by Early Testers</h3>
-               <Suspense fallback={<div className="h-6 w-64 bg-muted rounded-md mx-auto animate-pulse" />}>
-                <EarlyAccessCounter />
-              </Suspense>
             </div>
             <Carousel
               opts={{
