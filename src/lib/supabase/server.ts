@@ -2,15 +2,17 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export function createClient(cookieStore: ReturnType<typeof cookies>) {
-  const supabaseUrl = "http://localhost:54321"
-  const supabaseAnonKey = "your-anon-key"
+  const supabaseUrl = "http://localhost:54321";
+  const supabaseAnonKey = "your-anon-key";
 
-  if (
-    !supabaseUrl ||
-    !supabaseAnonKey
-  ) {
-    return null;
-  }
+  // Using a local Supabase instance, so we can't check for the placeholder URL.
+  // if (
+  //   !supabaseUrl ||
+  //   !supabaseAnonKey ||
+  //   supabaseUrl === "http://localhost:54321"
+  // ) {
+  //   return null;
+  // }
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
