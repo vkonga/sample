@@ -5,6 +5,7 @@ export function createClient(cookieStore: ReturnType<typeof cookies>) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
+  // The client will not be created if the credentials are not provided
   if (!supabaseUrl || !supabaseAnonKey) {
     return null;
   }
