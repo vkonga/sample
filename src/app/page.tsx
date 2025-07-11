@@ -1,10 +1,26 @@
-import { BookOpen, KeyRound, Palette, Quote, Rocket, Sparkles } from "lucide-react";
+import { BookOpen, KeyRound, Palette, Quote, Rocket, Sparkles, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import EarlyAccessForm from "@/components/early-access-form";
+import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
+  let earlyAccessCount = 0;
+  if (supabase) {
+    const { count, error } = await supabase
+      .from('early_access_requests')
+      .select('*', { count: 'exact', head: true });
+    
+    if (count) {
+      earlyAccessCount = count;
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -38,6 +54,10 @@ export default function Home() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
+                  <div className="flex justify-center items-center gap-2 mb-4 text-sm font-medium text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                    <p>Join <span className="font-bold text-foreground">{earlyAccessCount}</span> others on the waitlist!</p>
+                  </div>
                   <EarlyAccessForm />
                 </CardContent>
               </Card>

@@ -53,6 +53,7 @@ export default function EarlyAccessForm() {
     try {
       const result = await requestEarlyAccess({
         userName: values.name,
+        email: values.email,
         storyPreferences: values.preferences,
       });
 

@@ -4,9 +4,8 @@ import { cookies } from "next/headers";
 export function createClient(cookieStore: ReturnType<typeof cookies>) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn("Supabase URL or Anon Key is missing. Returning a null client.");
+
+  if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'http://localhost:54321') {
     return null;
   }
 
