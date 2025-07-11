@@ -7,8 +7,7 @@ export function createClient(cookieStore: ReturnType<typeof cookies>) {
 
   if (
     !supabaseUrl ||
-    !supabaseAnonKey ||
-    supabaseUrl === "http://localhost:54321"
+    !supabaseAnonKey
   ) {
     return null;
   }
