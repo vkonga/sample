@@ -141,8 +141,7 @@ export async function getEarlyAccessCount(): Promise<number> {
     
     return count ?? 0;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-    console.error("Error fetching count:", errorMessage);
+    console.error("Error fetching count:", error);
     return 0;
   }
 }
