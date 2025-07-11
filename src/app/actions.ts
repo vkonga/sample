@@ -123,3 +123,34 @@ export async function generateStoryAction(
     return { success: false, error: 'An unexpected error occurred. Please try again later.' };
   }
 }
+
+export async function getEarlyAccessCount(): Promise<number> {
+  const cookieStore = cookies();
+  
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("Database credentials not configured for counting.");
+    return 0;
+  }
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get(name: string) {
+        return cookieStore.get(name)?.value;
+      },
+    },
+  });
+
+  const { count, error } = await supabase
+    .from('early_access_requests')
+    .select('*', { count: 'exact', head: true });
+
+  if (error) {
+    console.error("Error fetching count:", error.message);
+    return 0;
+  }
+  
+  return count ?? 0;
+}
