@@ -20,6 +20,8 @@ function getSupabaseClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
+    // This is a server-side check, so we can throw an error.
+    // The calling function will catch it.
     throw new Error("Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file.");
   }
 
@@ -151,7 +153,7 @@ export async function getEarlyAccessCount(): Promise<number> {
     
     return count ?? 0;
   } catch (error) {
-    console.error("Error fetching count:", error);
+    console.log("Error fetching count:", error);
     return 0;
   }
 }
