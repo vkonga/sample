@@ -22,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
   preferences: z
     .string()
     .min(10, "Tell us a bit more about your preferences (min 10 characters).")
@@ -42,6 +43,7 @@ export default function EarlyAccessForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      email: "",
       preferences: "",
     },
   });
@@ -86,17 +88,17 @@ export default function EarlyAccessForm() {
               <div className="mx-auto">
                 <PartyPopper className="h-12 w-12 text-accent-foreground" />
               </div>
-              <CardTitle className="text-2xl font-headline mt-4">Enjoy your sneak peek!</CardTitle>
+              <CardTitle className="text-2xl font-headline mt-4">You're on the list!</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">Thank you for trying out our AI!</p>
+              <p className="text-muted-foreground">Thank you for signing up for early access.</p>
               <div className="text-left bg-background/50 p-4 rounded-lg border border-border">
-                <p className="font-semibold text-foreground">Here's a little something just for you:</p>
+                <p className="font-semibold text-foreground">As a token of our appreciation, here's a little preview of the magic:</p>
                 <blockquote className="mt-2 italic text-muted-foreground border-l-2 border-accent pl-4">
                   {formState.personalizedBlurb}
                 </blockquote>
               </div>
-              <p className="text-sm text-muted-foreground pt-4">We're excited to show you what's next!</p>
+              <p className="text-sm text-muted-foreground pt-4">We'll be in touch soon!</p>
             </CardContent>
           </Card>
         </div>
@@ -106,7 +108,7 @@ export default function EarlyAccessForm() {
   return (
     <div className="relative">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="name"
@@ -122,6 +124,19 @@ export default function EarlyAccessForm() {
           />
           <FormField
             control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., jane@example.com" {...field} type="email" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="preferences"
             render={({ field }) => (
               <FormItem>
@@ -130,7 +145,7 @@ export default function EarlyAccessForm() {
                   <Textarea
                     placeholder="e.g., 'Adventure stories for my 5-year-old son about friendly dragons.'"
                     {...field}
-                    rows={4}
+                    rows={3}
                   />
                 </FormControl>
                 <FormMessage />
@@ -149,12 +164,12 @@ export default function EarlyAccessForm() {
             {formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
+                Requesting Access...
               </>
-            ) : "Generate My Blurb"}
+            ) : "Request Early Access"}
           </Button>
           <p className="text-xs text-center text-muted-foreground">
-              Get a taste of our AI's creativity.
+              Be among the first to experience Storybook AI.
           </p>
         </form>
       </Form>

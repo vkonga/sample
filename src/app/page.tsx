@@ -23,7 +23,7 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-headline tracking-tight text-foreground">
-                Craft Personalized Stories in a Click.
+                Join the Waitlist for Magical Story Time.
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground">
                 Unleash your creativity with our AI-powered storybook generator. Create unique, engaging tales for children, and be the first to experience the magic.
