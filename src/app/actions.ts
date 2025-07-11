@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { generatePersonalizedBlurb } from "@/ai/flows/generate-personalized-blurb";
 import { generateStory } from "@/ai/flows/generate-story";
-import { createClient } from "@/lib/supabase/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 const requestAccessSchema = z.object({
@@ -22,19 +22,38 @@ export async function requestEarlyAccess(
   if (!parsedInput.success) {
     return { success: false, error: "Invalid input." };
   }
-
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return { success: false, error: "Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file." };
-  }
   
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabase) {
-    const errorMessage = "Supabase client could not be created. Please check your credentials.";
-    console.error(errorMessage);
-    return { success: false, error: errorMessage };
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return { success: false, error: "Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file." };
   }
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get(name: string) {
+        return cookieStore.get(name)?.value;
+      },
+      set(name: string, value: string, options: CookieOptions) {
+        try {
+          cookieStore.set({ name, value, ...options });
+        } catch (error) {
+          // The `set` method was called from a Server Component.
+        }
+      },
+      remove(name: string, options: CookieOptions) {
+        try {
+          cookieStore.set({ name, value: "", ...options });
+        } catch (error) {
+          // The `delete` method was called from a Server Component.
+        }
+      },
+    },
+  });
+
 
   try {
     const dataToInsert = { 
@@ -42,13 +61,6 @@ export async function requestEarlyAccess(
       email: parsedInput.data.email,
       preferences: parsedInput.data.storyPreferences
     };
-
-    console.log("Data being sent to Supabase:", dataToInsert);
-    console.log("Data types:", {
-      name: typeof dataToInsert.name,
-      email: typeof dataToInsert.email,
-      preferences: typeof dataToInsert.preferences,
-    });
 
     const { error } = await supabase.from('early_access_requests').insert(dataToInsert);
 
