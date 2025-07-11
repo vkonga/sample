@@ -38,6 +38,9 @@ export async function requestEarlyAccess(
 
     if (error) {
       console.error("Supabase insert error:", error);
+      if (error.code === '42501') { // permission denied
+        return { success: false, error: "Database security policy error. Please ensure 'early_access_requests' table allows public inserts in Supabase RLS settings." };
+      }
       return { success: false, error: "Could not save your request. Please try again." };
     }
 
