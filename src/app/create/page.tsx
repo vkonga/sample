@@ -1,6 +1,5 @@
 import { BookOpen } from 'lucide-react';
 import Link from 'next/link';
-import CreateStoryForm from '@/components/create-story-form';
 
 export default function CreatePage() {
   return (
@@ -20,10 +19,9 @@ export default function CreatePage() {
           <div className="text-center mb-12">
             <h2 className="text-4xl font-extrabold font-headline tracking-tight text-foreground">Let's Create a Story</h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              What kind of adventure should we go on? Describe your idea, and our AI storyteller will bring it to life.
+              This feature is coming soon!
             </p>
           </div>
-          <CreateStoryForm />
         </div>
       </main>
       <footer className="py-8 bg-background">

@@ -3,8 +3,7 @@
 import { z } from "zod";
 import { generatePersonalizedBlurb } from "@/ai/flows/generate-personalized-blurb";
 import { generateStory } from "@/ai/flows/generate-story";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createSupabaseServerClient } from "@/lib/supabase";
 
 const requestAccessSchema = z.object({
   userName: z.string(),
@@ -13,41 +12,6 @@ const requestAccessSchema = z.object({
 });
 
 type RequestAccessInput = z.infer<typeof requestAccessSchema>;
-
-function getSupabaseClient() {
-  const cookieStore = cookies();
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    // This is a server-side check, so we can throw a specific error.
-    // The calling function will catch it and display a helpful message.
-    throw new Error("Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file.");
-  }
-
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
-      },
-      set(name: string, value: string, options: CookieOptions) {
-        try {
-          cookieStore.set({ name, value, ...options });
-        } catch (error) {
-          // The `set` method was called from a Server Component.
-        }
-      },
-      remove(name: string, options: CookieOptions) {
-        try {
-          cookieStore.set({ name, value: "", ...options });
-        } catch (error) {
-          // The `delete` method was called from a Server Component.
-        }
-      },
-    },
-  });
-}
-
 
 export async function requestEarlyAccess(
   input: RequestAccessInput
@@ -59,7 +23,10 @@ export async function requestEarlyAccess(
   }
   
   try {
-    const supabase = getSupabaseClient();
+    const supabase = createSupabaseServerClient();
+    if (!supabase) {
+        return { success: false, error: "Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file." };
+    }
 
     const dataToInsert = { 
       name: parsedInput.data.userName,
@@ -141,19 +108,24 @@ export async function generateStoryAction(
 
 export async function getEarlyAccessCount(): Promise<number> {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = createSupabaseServerClient();
+    if (!supabase) {
+      console.error("Error fetching count: Supabase client could not be created. Check environment variables.");
+      return 0;
+    }
+    
     const { count, error } = await supabase
       .from('early_access_requests')
       .select('*', { count: 'exact', head: true });
 
     if (error) {
-      // This will catch connection errors (like fetch failed) and DB errors.
-      throw error;
+      console.error("Error fetching count:", error);
+      return 0;
     }
     
     return count ?? 0;
   } catch (error) {
-    console.log("Error fetching count:", error);
+    console.error("Error in getEarlyAccessCount:", error);
     return 0;
   }
 }
