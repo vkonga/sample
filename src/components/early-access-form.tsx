@@ -89,7 +89,7 @@ export default function EarlyAccessForm() {
             </CardHeader>
             <CardContent className="text-center space-y-4">
               <p className="text-muted-foreground">{formState.successMessage}</p>
-              <p className="text-sm text-muted-foreground pt-4">You can now close this page.</p>
+              <p className="text-sm text-muted-foreground pt-4">We'll be in touch soon. You can now close this page.</p>
             </CardContent>
           </Card>
         </div>
@@ -160,7 +160,7 @@ export default function EarlyAccessForm() {
             ) : "Request Early Access"}
           </Button>
           <p className="text-xs text-center text-muted-foreground">
-              Be among the first to experience Storybook AI.
+              Be among the first to experience SalistleAI.
           </p>
         </form>
       </Form>

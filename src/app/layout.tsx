@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Storybook AI | Early Access',
+  title: 'SalistleAI | Early Access',
   description: 'Request early access to our AI-powered storybook generation tool.',
 };
 

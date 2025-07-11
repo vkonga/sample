@@ -9,7 +9,7 @@ export default function CreatePage() {
           <Link href="/" className="flex items-center gap-2">
             <BookOpen className="h-8 w-8 text-primary-foreground bg-primary p-1.5 rounded-lg" />
             <h1 className="text-2xl font-bold font-headline text-foreground">
-              Storybook AI
+              SalistleAI
             </h1>
           </Link>
         </div>
@@ -26,7 +26,7 @@ export default function CreatePage() {
       </main>
       <footer className="py-8 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Storybook AI. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} SalistleAI. All rights reserved.</p>
         </div>
       </footer>
     </div>
