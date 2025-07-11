@@ -21,9 +21,9 @@ import { requestEarlyAccess } from "@/app/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters."),
+  userName: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
-  preferences: z
+  storyPreferences: z
     .string()
     .min(10, "Tell us a bit more about what you'd like to create (min 10 characters).")
     .max(500, "Preferences can be up to 500 characters."),
@@ -36,33 +36,29 @@ export default function EarlyAccessForm() {
     isSubmitting: false,
     isSubmitted: false,
     error: "",
-    personalizedBlurb: "",
+    successMessage: "",
   });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      userName: "",
       email: "",
-      preferences: "",
+      storyPreferences: "",
     },
   });
 
   async function onSubmit(values: FormValues) {
     setFormState({ ...formState, isSubmitting: true, error: "" });
     try {
-      const result = await requestEarlyAccess({
-        userName: values.name,
-        email: values.email,
-        storyPreferences: values.preferences,
-      });
+      const result = await requestEarlyAccess(values);
 
-      if (result.success && result.blurb) {
+      if (result.success) {
         setFormState({
           isSubmitting: false,
           isSubmitted: true,
           error: "",
-          personalizedBlurb: result.blurb,
+          successMessage: result.message,
         });
       } else {
         throw new Error(result.error || "An unknown error occurred.");
@@ -74,7 +70,7 @@ export default function EarlyAccessForm() {
         isSubmitting: false,
         isSubmitted: false,
         error: errorMessage,
-        personalizedBlurb: "",
+        successMessage: "",
       });
     }
   }
@@ -92,13 +88,7 @@ export default function EarlyAccessForm() {
               <CardTitle className="text-2xl font-headline mt-4">You're on the list!</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">Thank you for signing up! We'll be in touch soon.</p>
-              <div className="text-left bg-background/50 p-4 rounded-lg border border-border">
-                <p className="font-semibold text-foreground">As a token of our appreciation, here's a magical preview:</p>
-                <blockquote className="mt-2 italic text-muted-foreground border-l-2 border-accent pl-4">
-                  {formState.personalizedBlurb}
-                </blockquote>
-              </div>
+              <p className="text-muted-foreground">{formState.successMessage}</p>
               <p className="text-sm text-muted-foreground pt-4">You can now close this page.</p>
             </CardContent>
           </Card>
@@ -112,7 +102,7 @@ export default function EarlyAccessForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="name"
+            name="userName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Your Name</FormLabel>
@@ -138,7 +128,7 @@ export default function EarlyAccessForm() {
           />
           <FormField
             control={form.control}
-            name="preferences"
+            name="storyPreferences"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>What kind of stories do you want to create?</FormLabel>

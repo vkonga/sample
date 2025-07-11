@@ -1,8 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { generatePersonalizedBlurb } from "@/ai/flows/generate-personalized-blurb";
-import { generateStory } from "@/ai/flows/generate-story";
 import { createClient } from "@supabase/supabase-js";
 
 // Helper function to create a Supabase client
@@ -30,17 +28,16 @@ type RequestAccessInput = z.infer<typeof requestAccessSchema>;
 
 export async function requestEarlyAccess(
   input: RequestAccessInput
-): Promise<{ success: boolean; blurb?: string; error?: string }> {
+): Promise<{ success: boolean; message: string; error?: string }> {
   const parsedInput = requestAccessSchema.safeParse(input);
 
   if (!parsedInput.success) {
-    return { success: false, error: "Invalid input." };
+    return { success: false, message: "Invalid input." };
   }
 
   const { userName, email, storyPreferences } = parsedInput.data;
 
   try {
-    // 1. Save to Supabase
     const supabase = getSupabaseClient();
     if (!supabase) {
       throw new Error("Database client could not be initialized.");
@@ -55,25 +52,13 @@ export async function requestEarlyAccess(
       throw new Error(`Database error: ${dbError.message}`);
     }
 
-    // 2. Generate personalized blurb
-    const result = await generatePersonalizedBlurb({
-      userName: userName,
-      storyPreferences: storyPreferences,
-    });
+    return { success: true, message: `Thank you, ${userName}! We've received your request and will be in touch soon.` };
 
-    if (result.personalizedBlurb) {
-      return { success: true, blurb: result.personalizedBlurb };
-    } else {
-      return {
-        success: true,
-        blurb: `Thank you, ${userName}! We've received your request and will be in touch soon.`,
-      };
-    }
   } catch (error) {
     console.error("Error in requestEarlyAccess:", error);
     const errorMessage =
       error instanceof Error ? error.message : "An unknown server error.";
-    return { success: false, error: `An error occurred: ${errorMessage}` };
+    return { success: false, message: `An error occurred: ${errorMessage}` };
   }
 }
 
@@ -97,42 +82,5 @@ export async function getEarlyAccessCount(): Promise<number> {
       error instanceof Error ? error.message : "An unknown error occurred.";
     console.error("Error fetching count:", errorMessage);
     return 0;
-  }
-}
-
-
-const generateStorySchema = z.object({
-  prompt: z.string().min(10, "Prompt must be at least 10 characters."),
-});
-
-type GenerateStoryInput = z.infer<typeof generateStorySchema>;
-
-export async function generateStoryAction(
-  input: GenerateStoryInput
-): Promise<{ success: boolean; story?: string; error?: string }> {
-  const parsedInput = generateStorySchema.safeParse(input);
-  if (!parsedInput.success) {
-    return { success: false, error: "Invalid input." };
-  }
-
-  try {
-    const result = await generateStory({
-      prompt: parsedInput.data.prompt,
-    });
-
-    if (result.story) {
-      return { success: true, story: result.story };
-    } else {
-      return {
-        success: false,
-        error: "Could not generate a story. Please try again.",
-      };
-    }
-  } catch (error) {
-    console.error("Error generating story:", error);
-    return {
-      success: false,
-      error: "Unexpected error. Please try again later.",
-    };
   }
 }
