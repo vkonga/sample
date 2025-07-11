@@ -90,7 +90,7 @@ const storyPages = [
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
       <main className="flex-grow">
         <section id="hero" className="py-16 md:py-24 lg:py-32">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -101,7 +101,7 @@ export default function Home() {
                 height={120}
                 className="mx-auto mb-6 rounded-2xl shadow-lg"
               />
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-headline tracking-tight text-foreground">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-headline tracking-tight">
               SalistleAI
             </h1>
             <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
@@ -113,7 +113,7 @@ export default function Home() {
                </Suspense>
              </div>
             <div className="mt-8 flex justify-center">
-              <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold">
+              <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold">
                 <Link href="#early-access">Get Early Access</Link>
               </Button>
             </div>
@@ -133,7 +133,7 @@ export default function Home() {
               <CarouselContent>
                 {storyPages.map((page, index) => (
                   <CarouselItem key={index}>
-                    <Card className="overflow-hidden shadow-lg">
+                    <Card className="overflow-hidden shadow-lg bg-background border-border">
                       <CardContent className="p-0 flex flex-col items-center justify-center">
                         {page.image && (
                           <div className="relative aspect-video w-full">
@@ -169,10 +169,10 @@ export default function Home() {
         <section id="early-access" className="py-16 md:py-24">
            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-2xl mx-auto">
-                <Card className="shadow-2xl">
+                <Card className="shadow-2xl bg-card border-border">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-2xl font-headline">
-                      <KeyRound className="h-6 w-6 text-accent-foreground" />
+                      <KeyRound className="h-6 w-6 text-primary" />
                       Request Early Access
                     </CardTitle>
                   </CardHeader>

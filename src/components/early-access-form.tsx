@@ -80,10 +80,10 @@ export default function EarlyAccessForm() {
         <div
           className="animate-in fade-in-50 duration-500"
         >
-          <Card className="bg-gradient-to-br from-background to-primary/20">
+          <Card className="bg-transparent border-0 shadow-none">
             <CardHeader className="text-center">
               <div className="mx-auto">
-                <PartyPopper className="h-12 w-12 text-accent-foreground" />
+                <PartyPopper className="h-12 w-12 text-primary" />
               </div>
               <CardTitle className="text-2xl font-headline mt-4">You're on the list!</CardTitle>
             </CardHeader>
@@ -151,7 +151,7 @@ export default function EarlyAccessForm() {
             </div>
           )}
           
-          <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold" size="lg" disabled={formState.isSubmitting}>
+          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold" size="lg" disabled={formState.isSubmitting}>
             {formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
