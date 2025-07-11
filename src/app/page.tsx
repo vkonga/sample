@@ -34,6 +34,7 @@ const storyPages = [
   },
   {
     type: "page",
+    image: null,
     text: "Luna loved to watch the stars from her bedroom window every night. She dreamed of magical adventures far above the clouds.",
   },
   {
@@ -44,14 +45,17 @@ const storyPages = [
   },
   {
     type: "page",
+    image: null,
     text: "Without thinking twice, Luna put on her boots, grabbed her teddy, and tiptoed outside to find the fallen star.",
   },
   {
     type: "page",
+    image: null,
     text: "In the meadow, she found the tiniest star, sparkling softly. “Hello,” said Luna kindly. “Are you lost?”",
   },
   {
     type: "page",
+    image: null,
     text: "The little star blinked. “I fell… and I can’t find my way back home,” it whispered sadly.",
   },
   {
@@ -62,14 +66,17 @@ const storyPages = [
   },
   {
     type: "page",
+    image: null,
     text: "Up, up they soared—past clouds shaped like animals, past shimmering planets, until the stars twinkled all around them.",
   },
   {
     type: "page",
+    image: null,
     text: "The little star beamed happily. “I see my home!” it sang. Luna giggled as they danced among the constellations.",
   },
   {
     type: "page",
+    image: null,
     text: "With a gentle hug, Luna placed the star back where it belonged. “Thank you,” the star whispered. “You are my hero.”",
   },
   {
@@ -129,14 +136,14 @@ export default function Home() {
               </p>
             </div>
 
-            <Carousel className="w-full max-w-3xl mx-auto" opts={{ loop: true }}>
+            <Carousel className="w-full max-w-6xl mx-auto" opts={{ loop: true }}>
               <CarouselContent>
                 {storyPages.map((page, index) => (
                   <CarouselItem key={index}>
                     <Card className="overflow-hidden shadow-lg bg-background border-border">
-                      <CardContent className="p-0 flex flex-col items-center justify-center">
+                       <div className="flex flex-col md:flex-row items-center justify-center min-h-[500px]">
                         {page.image && (
-                          <div className="relative aspect-video w-full">
+                          <div className="relative w-full md:w-1/2 h-64 md:h-full min-h-[500px]">
                             <Image
                               src={page.image}
                               alt={page.alt}
@@ -145,17 +152,17 @@ export default function Home() {
                             />
                           </div>
                         )}
-                        <div className="p-6 md:p-8 space-y-4 text-center">
+                        <div className={`p-8 md:p-12 space-y-4 text-center flex flex-col justify-center items-center ${page.image ? 'md:w-1/2' : 'w-full'}`}>
                           {page.type === "cover" ? (
-                            <h3 className="text-2xl md:text-3xl font-bold font-headline">{page.text}</h3>
+                            <h3 className="text-4xl font-bold font-headline">{page.text}</h3>
                           ) : (
-                            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">{page.text}</p>
+                            <p className="font-headline leading-relaxed" style={{ fontSize: '25px' }}>{page.text}</p>
                           )}
                           {page.type === "end" && (
-                            <p className="text-xl md:text-2xl font-bold font-headline mt-6">{page.endText}</p>
+                            <p className="text-3xl font-bold font-headline mt-6">{page.endText}</p>
                           )}
                         </div>
-                      </CardContent>
+                      </div>
                     </Card>
                   </CarouselItem>
                 ))}
