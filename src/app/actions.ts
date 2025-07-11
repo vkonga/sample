@@ -65,6 +65,16 @@ export async function requestEarlyAccess(
       preferences: parsedInput.data.storyPreferences
     };
 
+    console.log("--- Sending data to Supabase ---");
+    console.log("Data object:", dataToInsert);
+    console.log("Data types:", {
+      name: typeof dataToInsert.name,
+      email: typeof dataToInsert.email,
+      preferences: typeof dataToInsert.preferences,
+    });
+    console.log("---------------------------------");
+
+
     const { error } = await supabase.from('early_access_requests').insert(dataToInsert);
 
     if (error) {
