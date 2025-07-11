@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import HTMLFlipBook from 'react-pageflip';
 import { Button } from './ui/button';
@@ -66,6 +66,16 @@ export default function StorybookViewer({ pages }: StorybookViewerProps) {
   const handleNext = useCallback(() => {
     bookRef.current?.pageFlip()?.flipNext();
   }, []);
+
+  useEffect(() => {
+    if (currentPage === pages.length - 1) {
+      const timer = setTimeout(() => {
+        bookRef.current?.pageFlip()?.flip(0, 'top');
+      }, 3000); // Wait 3 seconds before flipping back to cover
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentPage, pages.length]);
 
 
   return (
