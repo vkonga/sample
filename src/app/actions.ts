@@ -37,11 +37,20 @@ export async function requestEarlyAccess(
   }
 
   try {
-    const { error } = await supabase.from('early_access_requests').insert({ 
+    const dataToInsert = { 
       name: parsedInput.data.userName,
       email: parsedInput.data.email,
       preferences: parsedInput.data.storyPreferences
+    };
+
+    console.log("Data being sent to Supabase:", dataToInsert);
+    console.log("Data types:", {
+      name: typeof dataToInsert.name,
+      email: typeof dataToInsert.email,
+      preferences: typeof dataToInsert.preferences,
     });
+
+    const { error } = await supabase.from('early_access_requests').insert(dataToInsert);
 
     if (error) {
       console.error("Supabase insert error:", error);
