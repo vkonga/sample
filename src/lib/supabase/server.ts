@@ -2,12 +2,11 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 export function createClient(cookieStore: ReturnType<typeof cookies>) {
-  // Replace with your actual Supabase URL and Anon Key
-  const supabaseUrl = "https://your-supabase-url.supabase.co";
-  const supabaseAnonKey = "your-supabase-anon-key";
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
   // The client will not be created if the credentials are not provided
-  if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === "https://your-supabase-url.supabase.co") {
+  if (!supabaseUrl || !supabaseAnonKey) {
     return null;
   }
 

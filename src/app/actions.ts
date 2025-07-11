@@ -22,12 +22,16 @@ export async function requestEarlyAccess(
   if (!parsedInput.success) {
     return { success: false, error: "Invalid input." };
   }
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return { success: false, error: "Database credentials are not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your .env file." };
+  }
   
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
 
   if (!supabase) {
-    const errorMessage = "Supabase client could not be created. Please check your credentials in the Supabase helper files.";
+    const errorMessage = "Supabase client could not be created. Please check your credentials.";
     console.error(errorMessage);
     return { success: false, error: errorMessage };
   }
