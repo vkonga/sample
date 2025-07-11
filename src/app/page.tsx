@@ -47,9 +47,9 @@ export default async function Home() {
                 Unleash your creativity with our AI-powered storybook generator. Create unique, engaging tales for children, and be the first to experience the magic.
               </p>
               <div className="flex gap-4">
-                <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold">
+                {/* <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold">
                   <Link href="/create">Start Creating Now</Link>
-                </Button>
+                </Button> */}
               </div>
             </div>
             <div>

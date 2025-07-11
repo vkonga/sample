@@ -27,6 +27,7 @@ export async function requestEarlyAccess(
   }
   
   if (!supabase) {
+    console.error("Database connection failed: Supabase client is null. Check your .env credentials.");
     return { success: false, error: "Could not connect to the database. Please check your Supabase credentials in the .env file." };
   }
 
